@@ -100,12 +100,26 @@ cd backend  && npm run build && npm start   # compila para dist/ e roda node dis
 cd frontend && npm run build                # gera frontend/dist/ (estático)
 ```
 
-## 9. Deploy (pendente)
+## 9. Deploy
 
-Plano previsto: **frontend** estático na Netlify, **backend** na Render. Antes de publicar:
-- Definir `VITE_API_URL` para a URL pública do backend.
-- Ajustar `CORS_ORIGIN` no backend para a URL do frontend.
-- SPA: adicionar `_redirects`/`netlify.toml` para servir `index.html` em qualquer rota.
-- Conferir que nenhum `localhost:3333` está hardcoded (usar `VITE_API_URL`).
+Plano: **frontend** estático na Netlify, **backend** na Render. Os arquivos de
+configuração já estão no repositório:
+- `frontend/netlify.toml` — base, comando de build e pasta de publicação.
+- `frontend/public/_redirects` — fallback de SPA (toda rota → `index.html`).
+- `backend/render.yaml` — blueprint do serviço (build/start + variáveis).
+
+**Backend (Render):** novo Web Service a partir do repo, root `backend/`,
+build `npm install && npm run build`, start `npm start`. Variáveis:
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ANON_KEY` e
+`CORS_ORIGIN` (= URL do Netlify). A porta é injetada pela Render.
+
+**Frontend (Netlify):** novo site a partir do repo (o `netlify.toml` já define
+base/build/publish). Variável `VITE_API_URL` = `https://SEU-BACKEND.onrender.com/api`.
+
+**Conectar as pontas:** após ambos no ar, ajuste `CORS_ORIGIN` (backend) para a
+URL do Netlify e `VITE_API_URL` (frontend) para a URL da Render, e faça novo deploy.
+
+> O código já está pronto: o backend lê `process.env.PORT`/`CORS_ORIGIN` e o
+> frontend usa `VITE_API_URL` em todas as chamadas (sem `localhost` fixo).
 
 Detalhes de arquitetura e decisões: [ARCHITECTURE.md](ARCHITECTURE.md).

@@ -1,0 +1,22 @@
+# Blueprint de deploy do backend (Express) na Render.
+# A porta é injetada automaticamente pela Render via process.env.PORT.
+# As variáveis com "sync: false" devem ser preenchidas manualmente no painel
+# (são segredos e não ficam no repositório).
+
+services:
+  - type: web
+    name: glympse-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false   # URL pública do frontend na Netlify (ex: https://glympse.netlify.app)

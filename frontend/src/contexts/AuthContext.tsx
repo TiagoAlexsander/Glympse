@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setApiToken(savedToken);
       setToken(savedToken);
       // Busca dados atualizados do usuário
-      api.get('/auth/me', { baseURL: 'http://localhost:3333' })
+      api.get('/auth/me')
         .then(res => setUser(res.data.data.user))
         .catch(() => {
           // Token expirado ou inválido — limpa sessão
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) {
-    const res = await api.post('/auth/login', { email, password }, { baseURL: 'http://localhost:3333' });
+    const res = await api.post('/auth/login', { email, password });
     const { access_token, user: loggedUser } = res.data.data;
 
     localStorage.setItem('glympse_token', access_token);
@@ -63,19 +63,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
      'glympse_filter_minPrice','glympse_filter_maxPrice'].forEach(k => sessionStorage.removeItem(k));
 
     // Busca perfil completo da tabela public.users
-    const meRes = await api.get('/auth/me', { baseURL: 'http://localhost:3333' });
+    const meRes = await api.get('/auth/me');
     setUser(meRes.data.data.user);
   }
 
   async function register(first_name: string, last_name: string, email: string, password: string) {
-    await api.post('/auth/register', { first_name, last_name, email, password }, { baseURL: 'http://localhost:3333' });
+    await api.post('/auth/register', { first_name, last_name, email, password });
     // Após registrar, faz login automaticamente
     await login(email, password);
   }
 
   async function logout() {
     try {
-      await api.post('/auth/logout', {}, { baseURL: 'http://localhost:3333' });
+      await api.post('/auth/logout', {});
     } finally {
       localStorage.removeItem('glympse_token');
       setApiToken(null);

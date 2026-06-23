@@ -1,0 +1,11 @@
+# Configuração de deploy do frontend (Vite) na Netlify.
+# Lembre de definir a variável de ambiente VITE_API_URL no painel da Netlify
+# (Site settings > Environment variables) apontando para a URL pública do backend,
+# por exemplo: https://seu-backend.onrender.com/api
+
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+
+# O fallback de SPA fica em frontend/public/_redirects (copiado para dist/ no build).

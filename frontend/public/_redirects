@@ -1,0 +1,2 @@
+# SPA fallback: toda rota serve o index.html (o roteamento é feito no cliente pelo Wouter)
+/*    /index.html   200

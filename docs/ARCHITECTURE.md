@@ -78,7 +78,6 @@ Tipos gerados pelo Supabase em `backend/src/types/database.ts`. O cliente é `cr
 
 ## Pendências conhecidas (para produção)
 
-- **`AuthContext.tsx`** ainda força `baseURL: 'http://localhost:3333'` nas chamadas de auth (linhas ~39–78). Em dev funciona (auth responde em `/auth` e `/api/auth`), mas **precisa usar `VITE_API_URL` antes do deploy**.
-- Integração real do **Mercado Pago** e **e-mail transacional** ainda não implementados.
-- **Deploy** (Netlify + Render) não configurado — ver checklist em [SETUP.md](SETUP.md#9-deploy-pendente).
+- Integração real do **Mercado Pago** e **e-mail transacional** ainda não implementados (planejados como features pós-deploy).
+- **Deploy** (Netlify + Render): arquivos de configuração já no repo (`netlify.toml`, `_redirects`, `render.yaml`) — ver passo a passo em [SETUP.md](SETUP.md#9-deploy).
 - Polimento: substituir `alert()` por toasts, mais skeletons, acessibilidade.
