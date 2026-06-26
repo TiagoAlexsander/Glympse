@@ -90,6 +90,9 @@ export function CategoryTrack({ categories }: { categories: Category[] }) {
       <div
         className="overflow-hidden px-4 select-none cursor-grab active:cursor-grabbing"
         onPointerDown={e => iniciarArraste(e.clientX)}
+        // touch-action pan-y: permite rolar a página na vertical, mas deixa o
+        // arraste horizontal pro slider (sem isso o navegador "rouba" o gesto no celular)
+        style={{ touchAction: 'pan-y' }}
       >
         <div ref={trackRef} className="flex gap-[2vmin] w-max will-change-transform">
           {items.map(c => (
@@ -103,7 +106,7 @@ export function CategoryTrack({ categories }: { categories: Category[] }) {
                   src={c.image}
                   alt={c.name}
                   draggable={false}
-                  className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-500"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   style={{ objectPosition: '100% center' }}
                 />
               ) : (
