@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Switch, Route, Redirect, Link } from 'wouter';
+import { useState, useEffect } from 'react';
+import { Switch, Route, Redirect, Link, useLocation } from 'wouter';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { CartProvider, useCart } from '@/contexts/CartContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
@@ -16,6 +16,8 @@ import { LoginPage } from '@/pages/Login';
 import { RegisterPage } from '@/pages/Register';
 import { ProductsPage } from '@/pages/Products';
 import { ProductDetailPage } from '@/pages/ProductDetail';
+import { ShippingPage } from '@/pages/Shipping';
+import { ContactPage } from '@/pages/Contact';
 import { CartPage } from '@/pages/Cart';
 import { WishlistPage } from '@/pages/Wishlist';
 import { CheckoutPage } from '@/pages/Checkout';
@@ -65,15 +67,28 @@ function Loader() {
 function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const { cart } = useCart();
+  const [location] = useLocation();
   const [cartOpen, setCartOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const fecharMenu = () => setMenuOpen(false);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 h-16">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 h-16">
 
           {/* Logo + navegação */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-6">
+            {/* Botão voltar — só no mobile e fora da home */}
+            {location !== '/' && (
+              <button
+                onClick={() => window.history.back()}
+                aria-label="Voltar"
+                className="sm:hidden -ml-1 flex h-8 w-8 items-center justify-center text-foreground/70 hover:text-foreground transition"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+            )}
             <Link href="/" className="font-display text-xl font-bold uppercase tracking-[0.2em] text-foreground transition-opacity hover:opacity-70">
               Glympse
             </Link>
@@ -86,11 +101,11 @@ function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Ações */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <SearchBar />
 
             {user?.role === 'ADMIN' && (
-              <Link href="/admin" className="border border-border px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary hover:text-foreground transition">
+              <Link href="/admin" className="hidden sm:block border border-border px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:bg-secondary hover:text-foreground transition">
                 Admin
               </Link>
             )}
@@ -100,7 +115,7 @@ function Layout({ children }: { children: React.ReactNode }) {
             {user ? (
               <>
                 {/* Favoritos */}
-                <Link href="/wishlist" className="flex h-8 w-8 items-center justify-center text-foreground/70 hover:text-foreground transition" title="Favoritos">
+                <Link href="/wishlist" className="hidden sm:flex h-8 w-8 items-center justify-center text-foreground/70 hover:text-foreground transition" title="Favoritos">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.49 4.04 3 5.5l7 7Z"/></svg>
                 </Link>
                 {/* Sino de notificações */}
@@ -113,12 +128,12 @@ function Layout({ children }: { children: React.ReactNode }) {
                 <Link href="/conta" className="text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition hidden sm:block" title="Minha conta">
                   {user.first_name}
                 </Link>
-                <button onClick={logout} className="text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">
+                <button onClick={logout} className="hidden sm:block text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">
                   Sair
                 </button>
               </>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-3">
                 <Link href="/login" className="text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">
                   Entrar
                 </Link>
@@ -144,8 +159,48 @@ function Layout({ children }: { children: React.ReactNode }) {
                 </span>
               )}
             </button>
+
+            {/* Menu hambúrguer — só no mobile */}
+            <button
+              onClick={() => setMenuOpen(v => !v)}
+              aria-label="Menu"
+              aria-expanded={menuOpen}
+              className="sm:hidden flex h-8 w-8 items-center justify-center text-foreground/70 hover:text-foreground transition"
+            >
+              {menuOpen ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></svg>
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Menu mobile (dropdown) — aparece ao tocar no hambúrguer */}
+        {menuOpen && (
+          <nav className="sm:hidden border-t border-border bg-background px-4">
+            <div className="mx-auto flex max-w-7xl flex-col divide-y divide-border">
+              <Link href="/produtos" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Produtos</Link>
+              <Link href="/colecoes" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Coleções</Link>
+              {user ? (
+                <>
+                  <Link href="/wishlist" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Favoritos</Link>
+                  <Link href="/orders" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Pedidos</Link>
+                  <Link href="/conta" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Minha conta</Link>
+                  {user.role === 'ADMIN' && (
+                    <Link href="/admin" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Painel Admin</Link>
+                  )}
+                  <button onClick={() => { fecharMenu(); logout(); }} className="py-3 text-left text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Sair</button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-muted-foreground hover:text-foreground transition">Entrar</Link>
+                  <Link href="/register" onClick={fecharMenu} className="py-3 text-xs font-medium uppercase tracking-widest text-foreground transition">Cadastrar</Link>
+                </>
+              )}
+            </div>
+          </nav>
+        )}
       </header>
 
       <main>{children}</main>
@@ -158,6 +213,11 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function Routes() {
+  const [location] = useLocation();
+  // Rola para o topo a cada troca de rota (senão a nova página abre na mesma
+  // posição de rolagem da anterior — ex: clicar "Coleções" e cair lá embaixo)
+  useEffect(() => { window.scrollTo(0, 0); }, [location]);
+
   return (
     <Switch>
       <Route path="/login">
@@ -222,6 +282,14 @@ function Routes() {
 
       <Route path="/returns">
         <PrivateRoute><Layout><ReturnsPage /></Layout></PrivateRoute>
+      </Route>
+
+      {/* Páginas institucionais */}
+      <Route path="/entrega">
+        <Layout><ShippingPage /></Layout>
+      </Route>
+      <Route path="/contato">
+        <Layout><ContactPage /></Layout>
       </Route>
 
       {/* Listagem completa de produtos */}

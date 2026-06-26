@@ -31,8 +31,8 @@ export function Footer() {
           <h4 className="mb-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Ajuda</h4>
           <ul className="space-y-2 text-sm">
             <li><Link href="/returns" className="text-foreground/80 hover:text-foreground">Trocas e devoluções</Link></li>
-            <li><span className="text-foreground/80">Entrega e frete</span></li>
-            <li><span className="text-foreground/80">Contato</span></li>
+            <li><Link href="/entrega" className="text-foreground/80 hover:text-foreground">Entrega e frete</Link></li>
+            <li><Link href="/contato" className="text-foreground/80 hover:text-foreground">Contato</Link></li>
           </ul>
         </div>
       </div>

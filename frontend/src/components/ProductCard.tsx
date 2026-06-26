@@ -55,7 +55,7 @@ export function ProductCard({
               src={image}
               alt={imageAlt ?? name}
               loading="lazy"
-              className="w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
             />
           ) : (
             <div className="h-full w-full flex items-center justify-center text-muted-foreground text-xs uppercase tracking-widest">

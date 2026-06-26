@@ -2,14 +2,19 @@ export function cn(...classes: Array<string | false | null | undefined>): string
   return classes.filter(Boolean).join(' ');
 }
 
-// Ordem canônica de tamanhos para exibição consistente
-const ORDEM_TAMANHOS = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XGG', 'U',
-  '34', '36', '38', '40', '42', '44', '46', '48', '50'];
+// Ordem canônica dos tamanhos por letra (roupas)
+const ORDEM_LETRAS = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XGG', 'U'];
 
-// Retorna o índice de ordenação de um tamanho (desconhecidos vão para o fim)
+// Retorna o índice de ordenação de um tamanho.
+// Letras seguem a ordem canônica; números (ex: tênis 37, 38, 39...) são
+// ordenados pelo valor numérico e vêm depois das letras; desconhecidos no fim.
 export function ordemTamanho(tam: string): number {
-  const i = ORDEM_TAMANHOS.indexOf((tam ?? '').toUpperCase());
-  return i === -1 ? 999 : i;
+  const t = (tam ?? '').toUpperCase().trim();
+  const i = ORDEM_LETRAS.indexOf(t);
+  if (i !== -1) return i;
+  const n = parseFloat(t.replace(',', '.'));
+  if (!isNaN(n)) return 1000 + n; // qualquer número, em ordem crescente
+  return 9999;
 }
 
 // Lista de tamanhos sugeridos ao criar um produto

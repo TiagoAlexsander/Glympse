@@ -12,6 +12,7 @@ export function CategoryTrack({ categories }: { categories: Category[] }) {
   const [, navigate] = useLocation();
   const [items, setItems] = useState<Item[]>([]);
   const trackRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Estado do arraste guardado em refs (não dispara re-render)
   const mouseDownAt = useRef(0);
@@ -46,13 +47,24 @@ export function CategoryTrack({ categories }: { categories: Category[] }) {
     mouseDownAt.current = clientX;
     arrastou.current = false;
   }
+  // Limite mínimo de arraste = só a sobra real da faixa (largura total menos a
+  // parte visível). Evita arrastar além do último item e deixar espaço vazio no fim.
+  function limiteArraste(): number {
+    const track = trackRef.current;
+    const container = containerRef.current;
+    if (!track || !container) return -100;
+    const visivel = container.clientWidth - 32; // desconta o px-4 das laterais
+    const sobra = track.scrollWidth - visivel;
+    if (sobra <= 0) return 0; // cabe tudo na tela: nada a arrastar
+    return -(sobra / track.scrollWidth) * 100;
+  }
   function onMove(clientX: number) {
     if (mouseDownAt.current === 0) return;
     const delta = mouseDownAt.current - clientX;
     if (Math.abs(delta) > 4) arrastou.current = true;
     const maxDelta = window.innerWidth / 2;
     const pctMov = (delta / maxDelta) * -100;
-    const next = Math.max(Math.min(prevPercentage.current + pctMov, 0), -100);
+    const next = Math.max(Math.min(prevPercentage.current + pctMov, 0), limiteArraste());
     percentage.current = next;
     aplicar(next);
   }
@@ -88,8 +100,12 @@ export function CategoryTrack({ categories }: { categories: Category[] }) {
 
       {/* Faixa do slider — overflow escondido, arraste escopado */}
       <div
+        ref={containerRef}
         className="overflow-hidden px-4 select-none cursor-grab active:cursor-grabbing"
         onPointerDown={e => iniciarArraste(e.clientX)}
+        // touch-action pan-y: permite rolar a página na vertical, mas deixa o
+        // arraste horizontal pro slider (sem isso o navegador "rouba" o gesto no celular)
+        style={{ touchAction: 'pan-y' }}
       >
         <div ref={trackRef} className="flex gap-[2vmin] w-max will-change-transform">
           {items.map(c => (
@@ -103,7 +119,7 @@ export function CategoryTrack({ categories }: { categories: Category[] }) {
                   src={c.image}
                   alt={c.name}
                   draggable={false}
-                  className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-[filter] duration-500"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   style={{ objectPosition: '100% center' }}
                 />
               ) : (
