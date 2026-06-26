@@ -102,7 +102,13 @@ cd frontend && npm run build                # gera frontend/dist/ (estático)
 
 ## 9. Deploy
 
-Plano: **frontend** estático na Netlify, **backend** na Render. Os arquivos de
+> **Já em produção:** frontend em [glympsestore.me](https://glympsestore.me) (Netlify,
+> domínio próprio + HTTPS) e backend em `glympse-backend.onrender.com` (Render).
+> O `CORS_ORIGIN` em produção lista os domínios da loja (apex, `www` e o subdomínio
+> `*.netlify.app`), separados por vírgula. O plano free da Render "dorme" após
+> inatividade (cold start ~30–50s) — um ping periódico ao `/health` mantém acordado.
+
+Setup: **frontend** estático na Netlify, **backend** na Render. Os arquivos de
 configuração já estão no repositório:
 - `frontend/netlify.toml` — base, comando de build e pasta de publicação.
 - `frontend/public/_redirects` — fallback de SPA (toda rota → `index.html`).

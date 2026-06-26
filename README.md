@@ -2,6 +2,10 @@
 
 E-commerce de moda full-stack — monorepo com backend (API REST) e frontend (loja + painel administrativo) na mesma raiz. Visual minimalista preto e branco, com tema claro/escuro.
 
+**🔗 Demo ao vivo:** [glympsestore.me](https://glympsestore.me)
+
+> O backend usa o plano gratuito da Render, que "dorme" após inatividade — o **primeiro acesso pode levar ~30–50s** para responder.
+
 > Projeto de estudo/portfólio. Pagamento é um **mock** preparado para integração futura com Mercado Pago.
 
 ---
@@ -97,4 +101,6 @@ Mais scripts e operação: [docs/SETUP.md](docs/SETUP.md).
 
 ## Status
 
-Loja e painel admin completos e funcionais (tema claro/escuro). Pagamento em modo mock. Pendente para produção: integração real do Mercado Pago, e-mail transacional e deploy (ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)).
+**No ar em produção:** [glympsestore.me](https://glympsestore.me) — frontend na Netlify (domínio próprio + HTTPS) e backend na Render, ambos conectados ao Supabase.
+
+Loja e painel admin completos e funcionais (tema claro/escuro). Pagamento em modo **mock**. Features planejadas como pós-deploy: integração real do Mercado Pago, e-mail transacional e polimento (ver [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)).
