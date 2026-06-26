@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Switch, Route, Redirect, Link } from 'wouter';
+import { Switch, Route, Redirect, Link, useLocation } from 'wouter';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { CartProvider, useCart } from '@/contexts/CartContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
@@ -16,6 +16,8 @@ import { LoginPage } from '@/pages/Login';
 import { RegisterPage } from '@/pages/Register';
 import { ProductsPage } from '@/pages/Products';
 import { ProductDetailPage } from '@/pages/ProductDetail';
+import { ShippingPage } from '@/pages/Shipping';
+import { ContactPage } from '@/pages/Contact';
 import { CartPage } from '@/pages/Cart';
 import { WishlistPage } from '@/pages/Wishlist';
 import { CheckoutPage } from '@/pages/Checkout';
@@ -65,6 +67,7 @@ function Loader() {
 function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const { cart } = useCart();
+  const [location] = useLocation();
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const fecharMenu = () => setMenuOpen(false);
@@ -75,7 +78,17 @@ function Layout({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 h-16">
 
           {/* Logo + navegação */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-6">
+            {/* Botão voltar — só no mobile e fora da home */}
+            {location !== '/' && (
+              <button
+                onClick={() => window.history.back()}
+                aria-label="Voltar"
+                className="sm:hidden -ml-1 flex h-8 w-8 items-center justify-center text-foreground/70 hover:text-foreground transition"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+            )}
             <Link href="/" className="font-display text-xl font-bold uppercase tracking-[0.2em] text-foreground transition-opacity hover:opacity-70">
               Glympse
             </Link>
@@ -264,6 +277,14 @@ function Routes() {
 
       <Route path="/returns">
         <PrivateRoute><Layout><ReturnsPage /></Layout></PrivateRoute>
+      </Route>
+
+      {/* Páginas institucionais */}
+      <Route path="/entrega">
+        <Layout><ShippingPage /></Layout>
+      </Route>
+      <Route path="/contato">
+        <Layout><ContactPage /></Layout>
       </Route>
 
       {/* Listagem completa de produtos */}
