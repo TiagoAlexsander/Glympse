@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Switch, Route, Redirect, Link, useLocation } from 'wouter';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { CartProvider, useCart } from '@/contexts/CartContext';
@@ -213,6 +213,11 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function Routes() {
+  const [location] = useLocation();
+  // Rola para o topo a cada troca de rota (senão a nova página abre na mesma
+  // posição de rolagem da anterior — ex: clicar "Coleções" e cair lá embaixo)
+  useEffect(() => { window.scrollTo(0, 0); }, [location]);
+
   return (
     <Switch>
       <Route path="/login">
